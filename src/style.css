@@ -1,0 +1,113 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    @apply bg-gray-100 dark:bg-gray-900 antialiased transition-colors duration-300;
+  }
+}
+
+@layer components {
+  /* Glassmorfismo usando solo clases nativas */
+  .glass {
+    @apply bg-white/70 dark:bg-black/30 backdrop-blur-md 
+           border border-white/50 dark:border-white/10 
+           shadow-lg;
+  }
+  
+  .glass-card {
+    @apply glass rounded-xl shadow-xl;
+  }
+  
+  /* Textos con color sólido (sin neón problemático) */
+  .text-neon-blue {
+    @apply text-blue-600 dark:text-blue-400 font-bold;
+  }
+  
+  .text-neon-pink {
+    @apply text-pink-600 dark:text-pink-400 font-bold;
+  }
+  
+  .text-neon-green {
+    @apply text-green-600 dark:text-green-400 font-bold;
+  }
+  
+  .text-neon-purple {
+    @apply text-purple-600 dark:text-purple-400 font-bold;
+  }
+  
+  /* Botones */
+  .btn-neon {
+    @apply relative overflow-hidden bg-blue-600 dark:bg-pink-600
+           text-white font-bold py-3 px-6 rounded-lg
+           hover:bg-blue-700 dark:hover:bg-pink-700
+           transition-colors duration-300 w-full;
+  }
+  
+  /* Inputs */
+  .input-neon {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm 
+           border border-gray-300 dark:border-gray-700
+           rounded-lg px-4 py-3 text-gray-900 dark:text-white
+           focus:border-blue-600 dark:focus:border-pink-500 
+           focus:ring-2 focus:ring-blue-600/50 dark:focus:ring-pink-500/50
+           transition-all duration-300 w-full;
+  }
+  
+  /* Gradientes */
+  .bg-gradient-custom {
+    @apply bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10
+           dark:from-blue-500/20 dark:via-pink-500/20 dark:to-purple-500/20;
+  }
+  
+  /* Tarjetas de comparación */
+  .comparison-card {
+    @apply p-3 rounded-lg bg-white/60 dark:bg-gray-800/60 
+           border border-gray-200 dark:border-gray-700
+           transition-all duration-300 hover:scale-105;
+  }
+  
+  /* Tendencias */
+  .trend-up {
+    @apply text-green-600 dark:text-green-400;
+  }
+  
+  .trend-down {
+    @apply text-red-600 dark:text-red-400;
+  }
+}
+/* Transiciones suaves para cambio de tema */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* Excepciones para elementos que no deben tener transición */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Animación de pulso para el botón de tema */
+@keyframes theme-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.theme-pulse {
+  animation: theme-pulse 0.5s ease;
+}
