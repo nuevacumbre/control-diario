@@ -111,3 +111,28 @@
 .theme-pulse {
   animation: theme-pulse 0.5s ease;
 }
+
+/* Mejoras de legibilidad en inputs */
+input, textarea, select {
+  @apply text-gray-900 dark:text-white;
+}
+
+/* Placeholders más visibles */
+input::placeholder, textarea::placeholder {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+/* Para navegadores basados en WebKit */
+input::-webkit-input-placeholder {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+/* Para Firefox */
+input::-moz-placeholder {
+  @apply text-gray-400 dark:text-gray-500;
+}
+
+/* Para Internet Explorer */
+input:-ms-input-placeholder {
+  @apply text-gray-400 dark:text-gray-500;
+}

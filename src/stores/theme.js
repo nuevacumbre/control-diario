@@ -25,12 +25,14 @@ export const useThemeStore = defineStore('theme', () => {
       if (isDark.value) {
         document.documentElement.classList.add('dark')
         document.documentElement.setAttribute('data-theme', 'dark')
+        document.documentElement.style.colorScheme = 'dark'
       } else {
         document.documentElement.classList.remove('dark')
         document.documentElement.setAttribute('data-theme', 'light')
+        document.documentElement.style.colorScheme = 'light'
       }
       // Forzar actualización de estilos
-      document.documentElement.style.colorScheme = isDark.value ? 'dark' : 'light'
+      //document.documentElement.style.colorScheme = isDark.value ? 'dark' : 'light'
       
       // Disparar evento personalizado para que otros componentes reaccionen
       window.dispatchEvent(new CustomEvent('theme-change', { detail: { isDark: isDark.value } }))

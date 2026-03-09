@@ -234,7 +234,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -244,7 +243,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useThemeStore } from '../stores/theme'
 import { useIncomeStore } from '../stores/income'
 import { useRouter } from 'vue-router'
-import Chart from 'chart.js/auto'
+import Chart from 'chart.js/auto'  // Importación corregida
 import { formatDisplayDate, formatShortDate } from '../utils/dateUtils'
 
 const router = useRouter()
@@ -333,13 +332,15 @@ const cargarDatos = () => {
     const amount = data.amount || 0
     const colacion = data.colacion ? 5000 : 0
     const ganancia = amount * 0.3
+    const viatico = data.viatico || 0
     
     datos.push({
       fecha: dateStr,
       amount,
       colacion,
       ganancia,
-      total: ganancia + colacion + (data.viatico || 0)
+      viatico,
+      total: ganancia + colacion + viatico
     })
     
     // Agrupar por mes
@@ -364,6 +365,7 @@ const cargarDatos = () => {
   const totalVentas = datos.reduce((sum, d) => sum + d.amount, 0)
   const totalGanancia = datos.reduce((sum, d) => sum + d.ganancia, 0)
   const totalColaciones = datos.reduce((sum, d) => sum + d.colacion, 0)
+  const totalViaticos = datos.reduce((sum, d) => sum + (d.viatico || 0), 0)
   const diasTrabajados = datos.length
   
   const montos = datos.map(d => d.amount)
@@ -390,6 +392,7 @@ const cargarDatos = () => {
     totalVentas,
     totalGanancia,
     totalColaciones,
+    totalViaticos,
     diasTrabajados,
     promedioDiario: diasTrabajados > 0 ? totalVentas / diasTrabajados : 0,
     mejorDia,
@@ -397,7 +400,7 @@ const cargarDatos = () => {
     diasSinVentas,
     tendencia,
     diferencia,
-    porcentajeVentas: totalVentas > 0 ? (totalVentas / (totalVentas + totalColaciones)) * 100 : 0,
+    porcentajeVentas: totalVentas > 0 ? (totalVentas / (totalVentas + totalColaciones + totalViaticos)) * 100 : 0,
     porcentajeGanancia: totalVentas > 0 ? (totalGanancia / totalVentas) * 100 : 0,
     porcentajeColaciones: totalVentas > 0 ? (totalColaciones / totalVentas) * 100 : 0,
     topMejores: datos.sort((a, b) => b.amount - a.amount).slice(0, 5).map(d => ({
@@ -425,13 +428,22 @@ const cargarDatos = () => {
 
 const actualizarGraficos = (datos = [], diasPorMes = new Map()) => {
   // Destruir gráficos existentes
-  if (window.chartDiario) window.chartDiario.destroy()
-  if (window.chartMensual) window.chartMensual.destroy()
-  if (window.chartTorta) window.chartTorta.destroy()
+  if (window.chartDiario) {
+    window.chartDiario.destroy()
+    window.chartDiario = null
+  }
+  if (window.chartMensual) {
+    window.chartMensual.destroy()
+    window.chartMensual = null
+  }
+  if (window.chartTorta) {
+    window.chartTorta.destroy()
+    window.chartTorta = null
+  }
 
   // Gráfico diario
   const ctxDiario = chartDiario.value?.getContext('2d')
-  if (ctxDiario) {
+  if (ctxDiario && datos.length > 0) {
     window.chartDiario = new Chart(ctxDiario, {
       type: 'line',
       data: {
@@ -457,7 +469,7 @@ const actualizarGraficos = (datos = [], diasPorMes = new Map()) => {
 
   // Gráfico mensual
   const ctxMensual = chartMensual.value?.getContext('2d')
-  if (ctxMensual) {
+  if (ctxMensual && diasPorMes.size > 0) {
     const meses = Array.from(diasPorMes.keys()).sort()
     window.chartMensual = new Chart(ctxMensual, {
       type: 'bar',
@@ -482,21 +494,23 @@ const actualizarGraficos = (datos = [], diasPorMes = new Map()) => {
 
   // Gráfico de torta
   const ctxTorta = chartTorta.value?.getContext('2d')
-  if (ctxTorta) {
+  if (ctxTorta && kpis.value.totalVentas > 0) {
     window.chartTorta = new Chart(ctxTorta, {
       type: 'doughnut',
       data: {
-        labels: ['Ventas', 'Ganancia 30%', 'Colaciones'],
+        labels: ['Ventas', 'Ganancia 30%', 'Colaciones', 'Viáticos'],
         datasets: [{
           data: [
             kpis.value.totalVentas,
             kpis.value.totalGanancia,
-            kpis.value.totalColaciones
+            kpis.value.totalColaciones,
+            kpis.value.totalViaticos || 0
           ],
           backgroundColor: [
             '#36a2eb',
             '#4bc0c0',
-            '#ff6384'
+            '#ff6384',
+            '#9966ff'
           ]
         }]
       },
