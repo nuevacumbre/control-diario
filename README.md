@@ -18,7 +18,7 @@ Aplicación mobile-first para control diario de ingresos con Vue 3.
 
 ## 🚀 Demo
 
-[https://nuevacumbre.github.io/controldiario](https://nuevacumbre.github.io/controldiario)
+[https://nuevacumbre.github.io/control-diario](https://nuevacumbre.github.io/control-diario)
 
 ## 🔑 Credenciales de acceso
 
