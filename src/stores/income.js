@@ -20,6 +20,7 @@ export const useIncomeStore = defineStore('income', () => {
     }
     const data = loadDayData(date)
     currentDayData.value = data || { amount: 0, colacion: false, viatico: 0, percentage: 30 }
+    console.log('loadDay - datos cargados:', currentDayData.value)
     return currentDayData.value
   }
 

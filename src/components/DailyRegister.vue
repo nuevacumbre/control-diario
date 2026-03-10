@@ -664,9 +664,11 @@ const handleThemeToggle = () => {
 const selectedDate = computed({
   get: () => {
     const date = incomeStore.selectedDate
+    console.log('selectedDate get - store date:', date)
     return isValidDate(date) ? date : getCurrentDate()
   },
   set: (value) => {
+    console.log('selectedDate set:', value)
     if (value && isValidDate(value)) {
       incomeStore.setSelectedDate(value)
       loadDayData()
@@ -690,10 +692,23 @@ const availableMonths = computed(() => {
 // Cargar datos del día
 const loadDayData = () => {
   try {
-    const data = incomeStore.currentDayData
+    console.log('loadDayData - fecha:', selectedDate.value)
+    
+    // Cargar datos del día desde el store
+    const data = incomeStore.loadDay(selectedDate.value)
+    console.log('Datos cargados del store:', data)
+    
+    // Actualizar los campos del formulario
     ventaDiaria.value = data.amount || 0
     colacionActiva.value = data.colacion || false
     viaticoExtra.value = data.viatico || 0
+    
+    console.log('Valores actualizados:', {
+      venta: ventaDiaria.value,
+      colacion: colacionActiva.value,
+      viatico: viaticoExtra.value
+    })
+    
     checkHoliday()
     
     const [year, month] = selectedDate.value.split('-')
@@ -921,20 +936,28 @@ watch(selectedDate, () => {
 })
 
 // Escuchar cambios de tema
+// Reemplaza la sección de onMounted con esta versión corregida
 onMounted(() => {
   themeStore.initTheme()
   loadFeriados()
   loadAvailableYears()
   
+  // IMPORTANTE: Asegurar que la fecha seleccionada sea la actual
+  const today = getCurrentDate()
+  console.log('Fecha actual:', today)
+  
+  // Forzar la fecha actual si no hay ninguna seleccionada
   if (!selectedDate.value || !isValidDate(selectedDate.value)) {
-    selectedDate.value = getCurrentDate()
+    console.log('Estableciendo fecha actual:', today)
+    selectedDate.value = today
   }
   
+  // Cargar datos del día actual
   loadDayData()
   loadYearData()
   
-  const today = new Date()
-  const defaultMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
+  const defaultMonth = today.substring(0, 7) // YYYY-MM
+  console.log('Mes por defecto:', defaultMonth)
   selectedMonth.value = defaultMonth
   loadMonthData()
   
